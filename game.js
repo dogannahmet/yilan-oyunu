@@ -4,6 +4,21 @@ const ctx = canvas.getContext("2d");
 
 // Tahtayı 20x20'lik karelere böleriz; her kare 20 piksel
 const TILE = 20;
+const COLS = canvas.width / TILE;
+const ROWS = canvas.height / TILE;
+
+// Yılanın üstünde olmayan rastgele bir kare seç
+function randomFood(snake) {
+  while (true) {
+    const food = {
+      x: Math.floor(Math.random() * COLS),
+      y: Math.floor(Math.random() * ROWS),
+    };
+    if (!snake.some((part) => part.x === food.x && part.y === food.y)) {
+      return food;
+    }
+  }
+}
 
 // Oyun durumu: oyunla ilgili tüm bilgi burada durur
 const state = {
@@ -15,7 +30,9 @@ const state = {
   ],
   // Hareket yönü: her adımda x ve y'ye eklenir (şimdilik sağa)
   direction: { x: 1, y: 0 },
+  food: null, // aşağıda, yılan tanımlandıktan sonra atanır
 };
+state.food = randomFood(state.snake);
 
 // Durumu değiştirir, çizim yapmaz: yılanı bir kare ilerletir
 function update() {
@@ -24,14 +41,22 @@ function update() {
     x: head.x + state.direction.x,
     y: head.y + state.direction.y,
   };
-  // Başa yeni parça ekle, kuyruğu at: yılan ilerlemiş olur
+  // Başa yeni parça ekle
   state.snake.unshift(newHead);
-  state.snake.pop();
+  if (newHead.x === state.food.x && newHead.y === state.food.y) {
+    // Yem yenildi: kuyruğu atma, böylece yılan uzar; yeni yem koy
+    state.food = randomFood(state.snake);
+  } else {
+    // Yem yok: kuyruğu at, yılan sadece ilerler
+    state.snake.pop();
+  }
 }
 
 // Sadece çizer, durumu değiştirmez
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#e53935";
+  ctx.fillRect(state.food.x * TILE, state.food.y * TILE, TILE - 1, TILE - 1);
   ctx.fillStyle = "#4caf50";
   for (const part of state.snake) {
     ctx.fillRect(part.x * TILE, part.y * TILE, TILE - 1, TILE - 1);
