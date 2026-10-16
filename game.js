@@ -63,6 +63,27 @@ function saveMuted(value) {
 
 let muted = loadMuted();
 
+// Dokunmatik cihazlarda M tuşu yok: küçük bir ses düğmesi (HTML'de) kullanılır
+const muteButton = document.getElementById("mute-button");
+
+function updateMuteButton() {
+  muteButton.textContent = muted ? "🔇" : "🔊";
+  muteButton.setAttribute("aria-label", muted ? "Sesi aç" : "Sesi kapat");
+}
+
+// Sesleri aç/kapat ve tercihi kaydet (M tuşu ve düğme ortak kullanır)
+function toggleMute() {
+  muted = !muted;
+  saveMuted(muted);
+  updateMuteButton();
+}
+
+updateMuteButton();
+muteButton.addEventListener("click", () => {
+  startMusic(); // dokunuş sesi uyandırır, müzik de başlayabilir
+  toggleMute();
+});
+
 // Tarayıcılar sesi ancak kullanıcı dokunuşu/tuşu sırasında açar; ses bağlamını
 // burada, o hareketin içinde oluşturup uyandırırız
 function unlockAudio() {
@@ -234,11 +255,14 @@ function draw() {
   ctx.textAlign = "right";
   ctx.fillText("En yüksek: " + state.highScore, canvas.width - 8, 20);
 
-  // Sessize alma ipucu, sol altta; ses durumunu da gösterir
-  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-  ctx.font = "14px sans-serif";
-  ctx.textAlign = "left";
-  ctx.fillText(muted ? "M: sesi aç (ses kapalı)" : "M: sesi kapat", 8, canvas.height - 8);
+  // Sessize alma ipucu, sol altta; ses durumunu da gösterir.
+  // Dokunmatik cihazlarda yerine HTML'deki ses düğmesi görünür.
+  if (!isTouchDevice) {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(muted ? "M: sesi aç (ses kapalı)" : "M: sesi kapat", 8, canvas.height - 8);
+  }
 
   // Başlatma ipucu, sağ altta: oyun başlamadan ve bittikten sonra görünür
   if (!state.started || state.gameOver) {
@@ -278,10 +302,9 @@ function startOrRestart() {
 // Tuşa basılınca yönü kuyruğa ekler (hareketi update() yapar)
 function handleKey(event) {
   startMusic(); // müzik ilk tuş basışında başlar
-  // M: tüm sesleri aç/kapat ve tercihi kaydet
+  // M: tüm sesleri aç/kapat
   if (event.key === "m" || event.key === "M") {
-    muted = !muted;
-    saveMuted(muted);
+    toggleMute();
     return;
   }
   // Boşluk: oyun başlamadıysa başlat, bittiyse yeniden başlat

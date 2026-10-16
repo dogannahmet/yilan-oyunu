@@ -7,8 +7,44 @@ body {
   background: #222;
 }
 
+/* Tahta ve üstündeki düğme için sarmalayıcı (düğme buna göre konumlanır) */
+#board {
+  position: relative;
+  line-height: 0;
+}
+
 canvas {
   background: #111;
   border: 2px solid #555;
+  box-sizing: border-box; /* kenarlık genişliğin içinde kalsın */
+  /* Telefona sığacak kadar küçül, en-boy oranı (kare) bozulmasın */
+  width: min(400px, 100vw, 100vh);
+  height: auto;
+  aspect-ratio: 1 / 1;
   touch-action: none; /* parmakla kaydırırken sayfa kaymasın */
+}
+
+/* Ses düğmesi: masaüstünde gizli (orada M tuşu var), dokunmatikte görünür */
+#mute-button {
+  display: none;
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (pointer: coarse) {
+  #mute-button {
+    display: block;
+  }
 }

@@ -2,11 +2,16 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Yılan Oyunu</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="game" width="400" height="400"></canvas>
+  <div id="board">
+    <canvas id="game" width="400" height="400"></canvas>
+    <!-- Ses düğmesi yalnızca dokunmatik cihazlarda görünür (style.css) -->
+    <button id="mute-button" type="button" aria-label="Sesi kapat">🔊</button>
+  </div>
   <script src="game.js"></script>
 </body>
 </html>
