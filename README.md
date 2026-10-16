@@ -9,11 +9,12 @@ Kütüphane, sunucu veya veritabanı yok.
 
 ## Nasıl oynanır?
 
+- **Başlangıç:** sayfa açılınca oyun bekler; **boşluk tuşu** oyunu başlatır (sağ altta ipucu görünür)
 - **Ok tuşları:** yılanı yönlendirir (tam ters yöne dönülemez; hızlı basılan tuşlar sırayla işlenir)
 - **M tuşu:** tüm sesleri (efektler ve müzik) açar/kapatır; tercih tarayıcıda saklanır; ekranın sol altında ipucu olarak gösterilir
 - **Yem:** yılan yemi yiyince uzar, skor 1 artar ve kısa bir ses çalar
 - **Çarpışma:** duvara ya da kendine çarpınca oyun biter ve farklı bir ses çalar
-- **Boşluk tuşu:** oyun bittiyse yeniden başlatır
+- **Boşluk tuşu:** oyunu başlatır; oyun bittiyse yeniden başlatır
 - **Skor:** sol üstte, **en yüksek skor** sağ üstte gösterilir (yarı şeffaf, altındaki yılan/yem görünür)
 - **En yüksek skor:** tarayıcıda (localStorage) saklanır, sayfa kapansa da kalır
 - **Müzik:** oyun sürerken arka planda hafif gerilimli bir müzik çalar, oyun bitince susar
@@ -29,7 +30,7 @@ Kütüphane, sunucu veya veritabanı yok.
 
 ## Kod yapısı (`game.js`)
 
-- `state`: snake, direction, food, score, highScore, gameOver
+- `state`: snake, direction, inputQueue, food, score, highScore, started, gameOver
 - `update()`: durumu değiştirir (hareket, yem, çarpışma, skor). Çizim yapmaz.
 - `draw()`: sadece çizer. Durumu değiştirmez.
 - `handleKey()`: ok tuşları yönü, boşluk tuşu yeniden başlatmayı yönetir.
@@ -60,7 +61,11 @@ Her özellik ayrı bir commit olarak eklendi:
 v1.1 (`v1.1-duzeltmeler` dalı):
 
 14. Hata düzeltme: yön girdileri kuyruğa alındı
-15. M tuşuyla sessize alma
+15. M tuşuyla sessize alma ve ekranda ipucu (v1.1)
+
+v1.2 (`v1.2-baslangic` dalı):
+
+16. Başlangıç ekranı: oyun boşluk tuşuyla başlar
 
 Tam liste için: `git log --oneline`
 
