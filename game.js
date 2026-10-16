@@ -63,6 +63,17 @@ function saveMuted(value) {
 
 let muted = loadMuted();
 
+// Tarayıcılar sesi ancak kullanıcı dokunuşu/tuşu sırasında açar; ses bağlamını
+// burada, o hareketin içinde oluşturup uyandırırız
+function unlockAudio() {
+  try {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) {
+    // ses desteklenmiyorsa oyun yine de çalışsın
+  }
+}
+
 // Belirli frekansta (Hz), belirli sürede (sn) bir bip çalar
 function beep(frequency, duration, type, delay = 0, volume = 0.15) {
   if (muted) return; // tüm sesler (efektler + müzik) bu tek yerden geçer
@@ -113,10 +124,15 @@ function musicTick() {
 
 // İlk tuş basışında bir kez çağrılır (tarayıcılar sesi ancak o zaman açar)
 function startMusic() {
+  unlockAudio(); // her kullanıcı hareketinde sesi uyandır (özellikle iOS için)
   if (musicStarted) return;
   musicStarted = true;
   setInterval(musicTick, MUSIC_STEP_MS);
 }
+
+// Dokunmatik cihaz mı? (ana işaretçi parmak mı)
+const isTouchDevice =
+  typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
 
 // Oyun durumu: oyunla ilgili tüm bilgi burada durur
 const state = {
@@ -230,7 +246,8 @@ function draw() {
     ctx.font = "14px sans-serif";
     ctx.textAlign = "right";
     ctx.fillText(
-      state.started ? "Boşluk: yeniden başla" : "Boşluk: başla",
+      (isTouchDevice ? "Dokun: " : "Boşluk: ") +
+        (state.started ? "yeniden başla" : "başla"),
       canvas.width - 8,
       canvas.height - 8
     );
@@ -252,6 +269,12 @@ const KEY_DIRECTIONS = {
   ArrowRight: { x: 1, y: 0 },
 };
 
+// Oyun başlamadıysa başlatır, bittiyse yeniden başlatır (boşluk tuşu ve dokunuş)
+function startOrRestart() {
+  if (!state.started) state.started = true;
+  else if (state.gameOver) resetGame();
+}
+
 // Tuşa basılınca yönü kuyruğa ekler (hareketi update() yapar)
 function handleKey(event) {
   startMusic(); // müzik ilk tuş basışında başlar
@@ -264,8 +287,7 @@ function handleKey(event) {
   // Boşluk: oyun başlamadıysa başlat, bittiyse yeniden başlat
   if (event.key === " ") {
     event.preventDefault(); // boşluk sayfayı kaydırmasın
-    if (!state.started) state.started = true;
-    else if (state.gameOver) resetGame();
+    startOrRestart();
     return;
   }
   const next = KEY_DIRECTIONS[event.key];
@@ -293,7 +315,12 @@ let touchStart = null;
 function handleTouchStart(event) {
   event.preventDefault(); // sayfa kaymasın
   const touch = event.touches[0];
-  touchStart = { x: touch.clientX, y: touch.clientY };
+  // idle: dokunuş oyun beklerken/bitmişken mi başladı? (dokunuşla başlatma için)
+  touchStart = {
+    x: touch.clientX,
+    y: touch.clientY,
+    idle: !state.started || state.gameOver,
+  };
 }
 
 function handleTouchMove(event) {
@@ -310,10 +337,17 @@ function handleTouchMove(event) {
     queueDirection(dy > 0 ? KEY_DIRECTIONS.ArrowDown : KEY_DIRECTIONS.ArrowUp);
   }
   // Parmak kalkmadan art arda kaydırma olabilsin: başlangıcı buraya al
-  touchStart = { x: touch.clientX, y: touch.clientY };
+  touchStart = { x: touch.clientX, y: touch.clientY, idle: touchStart.idle };
 }
 
-function handleTouchEnd() {
+// Parmak kalkınca: oyun beklerken başlayan dokunuş oyunu başlatır/yeniden başlatır.
+// touchend kullanırız, çünkü mobil tarayıcılar sesi dokunuşun bitişinde açar.
+// Oynarken başlayan kaydırma ölünce yeniden başlatmasın diye "idle" kontrolü var.
+function handleTouchEnd(event) {
+  if (touchStart && touchStart.idle && event.type === "touchend") {
+    startMusic();
+    startOrRestart();
+  }
   touchStart = null;
 }
 
