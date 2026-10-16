@@ -23,3 +23,5 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 ## Özellik sırası (her biri ayrı commit)
 
 yılanı çizme -> hareket -> klavye -> yem -> çarpışma -> skor -> en yüksek skor
+(tamamlandı) + sonradan: yeniden başlatma, şeffaf skor yazıları, sesler.
+Yeni özellikler de aynı kuralla, ayrı commit'ler ve onayla eklenir.
