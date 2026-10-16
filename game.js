@@ -38,6 +38,27 @@ function draw() {
   }
 }
 
+// Hangi ok tuşu hangi yöne karşılık gelir
+const KEY_DIRECTIONS = {
+  ArrowUp: { x: 0, y: -1 },
+  ArrowDown: { x: 0, y: 1 },
+  ArrowLeft: { x: -1, y: 0 },
+  ArrowRight: { x: 1, y: 0 },
+};
+
+// Tuşa basılınca yalnızca yönü günceller
+function handleKey(event) {
+  const next = KEY_DIRECTIONS[event.key];
+  if (!next) return;
+  event.preventDefault(); // ok tuşları sayfayı kaydırmasın
+  // Tam ters yöne dönmeyi engelle (yılan kendi üstüne binmesin)
+  const isReverse =
+    next.x === -state.direction.x && next.y === -state.direction.y;
+  if (!isReverse) state.direction = next;
+}
+
+document.addEventListener("keydown", handleKey);
+
 // Oyun döngüsü: güncelle -> çiz -> bekle (yaklaşık 100 ms)
 function loop() {
   update();
