@@ -8,6 +8,7 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 - Küçük ve anlaşılır commit'ler at.
 - Her adımda ne yaptığını ve nedenini kısaca açıkla.
 - Kullanıcı onay vermeden bir sonraki özelliğe geçme.
+- Oyun sürerken arka planda hafif gerilim müziği çalar, oyun bitince susar. Müzik dosyasız, Web Audio ile üretilir ve ilk tuş basışında başlar.
 
 ## Proje kısıtları
 

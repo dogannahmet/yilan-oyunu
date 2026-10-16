@@ -43,7 +43,7 @@ function saveHighScore(value) {
 let audioCtx = null;
 
 // Belirli frekansta (Hz), belirli sürede (sn) bir bip çalar
-function beep(frequency, duration, type, delay = 0) {
+function beep(frequency, duration, type, delay = 0, volume = 0.15) {
   try {
     // AudioContext'i ilk kullanımda oluştur (tarayıcılar tuş basışından sonra izin verir)
     if (!audioCtx) audioCtx = new AudioContext();
@@ -52,7 +52,7 @@ function beep(frequency, duration, type, delay = 0) {
     const start = audioCtx.currentTime + delay;
     osc.type = type;
     osc.frequency.value = frequency;
-    gain.gain.setValueAtTime(0.15, start);
+    gain.gain.setValueAtTime(volume, start);
     gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
@@ -73,6 +73,27 @@ function playGameOverSound() {
   beep(330, 0.2, "sawtooth");
   beep(247, 0.2, "sawtooth", 0.2);
   beep(165, 0.4, "sawtooth", 0.4);
+}
+
+// Arka plan müziği: alçak, tekrar eden, hafif gerilimli bir nota dizisi.
+// La (110 Hz) ile Si bemol (116.5 Hz) yan yana olduğu için kulağa huzursuz gelir.
+const MUSIC_NOTES = [110, 110, 116.5, 110, 110, 130.8, 110, 116.5];
+const MUSIC_STEP_MS = 300; // her nota arasındaki süre
+let musicStarted = false;
+let musicStep = 0;
+
+// Her adımda bir nota çalar; oyun bitmişse sessiz kalır
+function musicTick() {
+  if (state.gameOver) return;
+  beep(MUSIC_NOTES[musicStep % MUSIC_NOTES.length], 0.28, "triangle", 0, 0.06);
+  musicStep += 1;
+}
+
+// İlk tuş basışında bir kez çağrılır (tarayıcılar sesi ancak o zaman açar)
+function startMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  setInterval(musicTick, MUSIC_STEP_MS);
 }
 
 // Oyun durumu: oyunla ilgili tüm bilgi burada durur
@@ -181,6 +202,7 @@ const KEY_DIRECTIONS = {
 
 // Tuşa basılınca yalnızca yönü günceller
 function handleKey(event) {
+  startMusic(); // müzik ilk tuş basışında başlar
   // Boşluk: yalnızca oyun bittiyse yeniden başlat
   if (event.key === " ") {
     event.preventDefault(); // boşluk sayfayı kaydırmasın

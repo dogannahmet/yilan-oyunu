@@ -15,6 +15,7 @@ Kütüphane, sunucu veya veritabanı yok.
 - **Boşluk tuşu:** oyun bittiyse yeniden başlatır
 - **Skor:** sol üstte, **en yüksek skor** sağ üstte gösterilir (yarı şeffaf, altındaki yılan/yem görünür)
 - **En yüksek skor:** tarayıcıda (localStorage) saklanır, sayfa kapansa da kalır
+- **Müzik:** oyun sürerken arka planda hafif gerilimli bir müzik çalar, oyun bitince susar
 - **Sesler:** ses dosyası yok, tarayıcının Web Audio özelliğiyle üretilir. Tarayıcılar sesi ilk tuş basışından sonra açar.
 
 ## Dosyalar
@@ -34,6 +35,7 @@ Kütüphane, sunucu veya veritabanı yok.
 - `resetGame()`: oyunu başa sarar, en yüksek skoru korur.
 - `loop()`: her 100 ms'de güncelle -> çiz.
 - `beep()`, `playEatSound()`, `playGameOverSound()`: sesler.
+- `startMusic()`, `musicTick()`: arka plan müziği.
 
 ## Geliştirme geçmişi
 
@@ -51,6 +53,7 @@ Her özellik ayrı bir commit olarak eklendi:
 10. Boşluk tuşuyla yeniden başlatma
 11. Skor yazılarını yarı şeffaf yapma
 12. Yem ve oyun sonu sesleri
+13. Arka plan gerilim müziği
 
 Tam liste için: `git log --oneline`
 
