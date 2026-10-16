@@ -10,7 +10,7 @@ Kütüphane, sunucu veya veritabanı yok.
 ## Nasıl oynanır?
 
 - **Ok tuşları:** yılanı yönlendirir (tam ters yöne dönülemez; hızlı basılan tuşlar sırayla işlenir)
-- **M tuşu:** tüm sesleri (efektler ve müzik) açar/kapatır; tercih tarayıcıda saklanır
+- **M tuşu:** tüm sesleri (efektler ve müzik) açar/kapatır; tercih tarayıcıda saklanır; ekranın sol altında ipucu olarak gösterilir
 - **Yem:** yılan yemi yiyince uzar, skor 1 artar ve kısa bir ses çalar
 - **Çarpışma:** duvara ya da kendine çarpınca oyun biter ve farklı bir ses çalar
 - **Boşluk tuşu:** oyun bittiyse yeniden başlatır

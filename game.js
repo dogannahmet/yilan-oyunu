@@ -216,6 +216,12 @@ function draw() {
   ctx.textAlign = "right";
   ctx.fillText("En yüksek: " + state.highScore, canvas.width - 8, 20);
 
+  // Sessize alma ipucu, sol altta; ses durumunu da gösterir
+  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+  ctx.font = "14px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(muted ? "M: sesi aç (ses kapalı)" : "M: sesi kapat", 8, canvas.height - 8);
+
   if (state.gameOver) {
     ctx.fillStyle = "#fff"; // "Oyun Bitti" tam opak kalsın
     ctx.font = "32px sans-serif";
