@@ -39,6 +39,42 @@ function saveHighScore(value) {
   }
 }
 
+// Sesler: ses dosyası yok, tarayıcının Web Audio özelliğiyle bip üretiriz
+let audioCtx = null;
+
+// Belirli frekansta (Hz), belirli sürede (sn) bir bip çalar
+function beep(frequency, duration, type, delay = 0) {
+  try {
+    // AudioContext'i ilk kullanımda oluştur (tarayıcılar tuş basışından sonra izin verir)
+    if (!audioCtx) audioCtx = new AudioContext();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const start = audioCtx.currentTime + delay;
+    osc.type = type;
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.15, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(start);
+    osc.stop(start + duration);
+  } catch (e) {
+    // ses çalınamazsa oyun yine de çalışsın
+  }
+}
+
+// Yem yenince: kısa, yüksek ve tatlı bir "pıt"
+function playEatSound() {
+  beep(880, 0.1, "square");
+}
+
+// Oyun bitince: alçalan üç ton
+function playGameOverSound() {
+  beep(330, 0.2, "sawtooth");
+  beep(247, 0.2, "sawtooth", 0.2);
+  beep(165, 0.4, "sawtooth", 0.4);
+}
+
 // Oyun durumu: oyunla ilgili tüm bilgi burada durur
 const state = {
   // Yılan, parçalarının listesi; ilk eleman baş
@@ -88,6 +124,7 @@ function update() {
   );
   if (hitWall || hitSelf) {
     state.gameOver = true;
+    playGameOverSound();
     return;
   }
 
@@ -96,6 +133,7 @@ function update() {
   if (newHead.x === state.food.x && newHead.y === state.food.y) {
     // Yem yenildi: kuyruğu atma, böylece yılan uzar; skor artar; yeni yem koy
     state.score += 1;
+    playEatSound();
     if (state.score > state.highScore) {
       state.highScore = state.score;
       saveHighScore(state.highScore);

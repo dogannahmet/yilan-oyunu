@@ -12,7 +12,7 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 ## Proje kısıtları
 
 - Dosyalar: `index.html`, `style.css`, `game.js` (çift tıklayınca açılmalı).
-- Kütüphane, sunucu, veritabanı yok. Ses, menü, seviye yok.
+- Kütüphane, sunucu, veritabanı yok. Menü, seviye yok. Sesler dosyasız, Web Audio ile üretilir.
 
 ## Mimari
 
