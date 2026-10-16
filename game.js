@@ -56,6 +56,19 @@ const state = {
 };
 state.food = randomFood(state.snake);
 
+// Oyunu başa sar: en yüksek skor korunur, geri kalan sıfırlanır
+function resetGame() {
+  state.snake = [
+    { x: 10, y: 10 },
+    { x: 9, y: 10 },
+    { x: 8, y: 10 },
+  ];
+  state.direction = { x: 1, y: 0 };
+  state.food = randomFood(state.snake);
+  state.score = 0;
+  state.gameOver = false;
+}
+
 // Durumu değiştirir, çizim yapmaz: yılanı bir kare ilerletir
 function update() {
   if (state.gameOver) return; // oyun bittiyse hiçbir şey değişmesin
@@ -129,6 +142,12 @@ const KEY_DIRECTIONS = {
 
 // Tuşa basılınca yalnızca yönü günceller
 function handleKey(event) {
+  // Boşluk: yalnızca oyun bittiyse yeniden başlat
+  if (event.key === " ") {
+    event.preventDefault(); // boşluk sayfayı kaydırmasın
+    if (state.gameOver) resetGame();
+    return;
+  }
   const next = KEY_DIRECTIONS[event.key];
   if (!next) return;
   event.preventDefault(); // ok tuşları sayfayı kaydırmasın
