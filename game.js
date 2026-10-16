@@ -106,7 +106,7 @@ let musicStep = 0;
 
 // Her adımda bir nota çalar; oyun bitmişse sessiz kalır
 function musicTick() {
-  if (state.gameOver) return;
+  if (!state.started || state.gameOver) return;
   beep(MUSIC_NOTES[musicStep % MUSIC_NOTES.length], 0.28, "triangle", 0, 0.06);
   musicStep += 1;
 }
@@ -133,6 +133,7 @@ const state = {
   food: null, // aşağıda, yılan tanımlandıktan sonra atanır
   score: 0,
   highScore: loadHighScore(),
+  started: false, // oyun boşluk tuşuyla başlar; o zamana kadar bekler
   gameOver: false,
 };
 state.food = randomFood(state.snake);
@@ -153,7 +154,8 @@ function resetGame() {
 
 // Durumu değiştirir, çizim yapmaz: yılanı bir kare ilerletir
 function update() {
-  if (state.gameOver) return; // oyun bittiyse hiçbir şey değişmesin
+  // Başlamadıysa ya da bittiyse hiçbir şey değişmesin
+  if (!state.started || state.gameOver) return;
 
   // Kuyruktan yalnızca bir yön al. Ters yön kontrolü, yılanın gerçekte
   // gittiği yöne (state.direction) göre burada yapılır.
@@ -222,6 +224,18 @@ function draw() {
   ctx.textAlign = "left";
   ctx.fillText(muted ? "M: sesi aç (ses kapalı)" : "M: sesi kapat", 8, canvas.height - 8);
 
+  // Başlatma ipucu, sağ altta: oyun başlamadan ve bittikten sonra görünür
+  if (!state.started || state.gameOver) {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(
+      state.started ? "Boşluk: yeniden başla" : "Boşluk: başla",
+      canvas.width - 8,
+      canvas.height - 8
+    );
+  }
+
   if (state.gameOver) {
     ctx.fillStyle = "#fff"; // "Oyun Bitti" tam opak kalsın
     ctx.font = "32px sans-serif";
@@ -247,15 +261,17 @@ function handleKey(event) {
     saveMuted(muted);
     return;
   }
-  // Boşluk: yalnızca oyun bittiyse yeniden başlat
+  // Boşluk: oyun başlamadıysa başlat, bittiyse yeniden başlat
   if (event.key === " ") {
     event.preventDefault(); // boşluk sayfayı kaydırmasın
-    if (state.gameOver) resetGame();
+    if (!state.started) state.started = true;
+    else if (state.gameOver) resetGame();
     return;
   }
   const next = KEY_DIRECTIONS[event.key];
   if (!next) return;
   event.preventDefault(); // ok tuşları sayfayı kaydırmasın
+  if (!state.started) return; // oyun başlamadan yön girdisi alma
   // Yönü doğrudan değiştirme, kuyruğa ekle (en fazla 2 girdi).
   // Aynı yönü art arda eklemek kuyruğu boşuna doldurur, onu atla.
   const last = state.inputQueue[state.inputQueue.length - 1] || state.direction;
