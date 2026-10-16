@@ -104,8 +104,10 @@ const state = {
     { x: 9, y: 10 },
     { x: 8, y: 10 },
   ],
-  // Hareket yönü: her adımda x ve y'ye eklenir (şimdilik sağa)
+  // Yılanın GERÇEKTE gittiği yön: sadece update() değiştirir (şimdilik sağa)
   direction: { x: 1, y: 0 },
+  // Basılan ama henüz işlenmemiş yönler (en fazla 2); her karede biri işlenir
+  inputQueue: [],
   food: null, // aşağıda, yılan tanımlandıktan sonra atanır
   score: 0,
   highScore: loadHighScore(),
@@ -121,6 +123,7 @@ function resetGame() {
     { x: 8, y: 10 },
   ];
   state.direction = { x: 1, y: 0 };
+  state.inputQueue = [];
   state.food = randomFood(state.snake);
   state.score = 0;
   state.gameOver = false;
@@ -129,6 +132,13 @@ function resetGame() {
 // Durumu değiştirir, çizim yapmaz: yılanı bir kare ilerletir
 function update() {
   if (state.gameOver) return; // oyun bittiyse hiçbir şey değişmesin
+
+  // Kuyruktan yalnızca bir yön al. Ters yön kontrolü, yılanın gerçekte
+  // gittiği yöne (state.direction) göre burada yapılır.
+  const next = state.inputQueue.shift();
+  if (next && !(next.x === -state.direction.x && next.y === -state.direction.y)) {
+    state.direction = next;
+  }
 
   const head = state.snake[0];
   const newHead = {
@@ -200,7 +210,7 @@ const KEY_DIRECTIONS = {
   ArrowRight: { x: 1, y: 0 },
 };
 
-// Tuşa basılınca yalnızca yönü günceller
+// Tuşa basılınca yönü kuyruğa ekler (hareketi update() yapar)
 function handleKey(event) {
   startMusic(); // müzik ilk tuş basışında başlar
   // Boşluk: yalnızca oyun bittiyse yeniden başlat
@@ -212,10 +222,11 @@ function handleKey(event) {
   const next = KEY_DIRECTIONS[event.key];
   if (!next) return;
   event.preventDefault(); // ok tuşları sayfayı kaydırmasın
-  // Tam ters yöne dönmeyi engelle (yılan kendi üstüne binmesin)
-  const isReverse =
-    next.x === -state.direction.x && next.y === -state.direction.y;
-  if (!isReverse) state.direction = next;
+  // Yönü doğrudan değiştirme, kuyruğa ekle (en fazla 2 girdi).
+  // Aynı yönü art arda eklemek kuyruğu boşuna doldurur, onu atla.
+  const last = state.inputQueue[state.inputQueue.length - 1] || state.direction;
+  const isSame = next.x === last.x && next.y === last.y;
+  if (state.inputQueue.length < 2 && !isSame) state.inputQueue.push(next);
 }
 
 document.addEventListener("keydown", handleKey);
