@@ -13,7 +13,21 @@ const state = {
     { x: 9, y: 10 },
     { x: 8, y: 10 },
   ],
+  // Hareket yönü: her adımda x ve y'ye eklenir (şimdilik sağa)
+  direction: { x: 1, y: 0 },
 };
+
+// Durumu değiştirir, çizim yapmaz: yılanı bir kare ilerletir
+function update() {
+  const head = state.snake[0];
+  const newHead = {
+    x: head.x + state.direction.x,
+    y: head.y + state.direction.y,
+  };
+  // Başa yeni parça ekle, kuyruğu at: yılan ilerlemiş olur
+  state.snake.unshift(newHead);
+  state.snake.pop();
+}
 
 // Sadece çizer, durumu değiştirmez
 function draw() {
@@ -24,4 +38,10 @@ function draw() {
   }
 }
 
-draw();
+// Oyun döngüsü: güncelle -> çiz -> bekle (yaklaşık 100 ms)
+function loop() {
+  update();
+  draw();
+}
+
+setInterval(loop, 100);
