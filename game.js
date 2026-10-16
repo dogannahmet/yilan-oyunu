@@ -31,6 +31,7 @@ const state = {
   // Hareket yönü: her adımda x ve y'ye eklenir (şimdilik sağa)
   direction: { x: 1, y: 0 },
   food: null, // aşağıda, yılan tanımlandıktan sonra atanır
+  score: 0,
   gameOver: false,
 };
 state.food = randomFood(state.snake);
@@ -60,7 +61,8 @@ function update() {
   // Başa yeni parça ekle
   state.snake.unshift(newHead);
   if (newHead.x === state.food.x && newHead.y === state.food.y) {
-    // Yem yenildi: kuyruğu atma, böylece yılan uzar; yeni yem koy
+    // Yem yenildi: kuyruğu atma, böylece yılan uzar; skor artar; yeni yem koy
+    state.score += 1;
     state.food = randomFood(state.snake);
   } else {
     // Yem yok: kuyruğu at, yılan sadece ilerler
@@ -78,8 +80,13 @@ function draw() {
     ctx.fillRect(part.x * TILE, part.y * TILE, TILE - 1, TILE - 1);
   }
 
+  // Skoru sol üst köşeye yaz
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("Skor: " + state.score, 8, 20);
+
   if (state.gameOver) {
-    ctx.fillStyle = "#fff";
     ctx.font = "32px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Oyun Bitti", canvas.width / 2, canvas.height / 2);
