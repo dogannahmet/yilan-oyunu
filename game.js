@@ -31,16 +31,32 @@ const state = {
   // Hareket yönü: her adımda x ve y'ye eklenir (şimdilik sağa)
   direction: { x: 1, y: 0 },
   food: null, // aşağıda, yılan tanımlandıktan sonra atanır
+  gameOver: false,
 };
 state.food = randomFood(state.snake);
 
 // Durumu değiştirir, çizim yapmaz: yılanı bir kare ilerletir
 function update() {
+  if (state.gameOver) return; // oyun bittiyse hiçbir şey değişmesin
+
   const head = state.snake[0];
   const newHead = {
     x: head.x + state.direction.x,
     y: head.y + state.direction.y,
   };
+
+  // Duvara çarptı mı? (tahtanın dışına çıktı mı)
+  const hitWall =
+    newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS;
+  // Kendine çarptı mı? (yeni baş, mevcut bir parçanın üstünde mi)
+  const hitSelf = state.snake.some(
+    (part) => part.x === newHead.x && part.y === newHead.y
+  );
+  if (hitWall || hitSelf) {
+    state.gameOver = true;
+    return;
+  }
+
   // Başa yeni parça ekle
   state.snake.unshift(newHead);
   if (newHead.x === state.food.x && newHead.y === state.food.y) {
@@ -60,6 +76,13 @@ function draw() {
   ctx.fillStyle = "#4caf50";
   for (const part of state.snake) {
     ctx.fillRect(part.x * TILE, part.y * TILE, TILE - 1, TILE - 1);
+  }
+
+  if (state.gameOver) {
+    ctx.fillStyle = "#fff";
+    ctx.font = "32px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Oyun Bitti", canvas.width / 2, canvas.height / 2);
   }
 }
 
