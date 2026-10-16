@@ -42,8 +42,30 @@ function saveHighScore(value) {
 // Sesler: ses dosyası yok, tarayıcının Web Audio özelliğiyle bip üretiriz
 let audioCtx = null;
 
+// Sessize alma durumu: M tuşu değiştirir, localStorage hatırlar
+const MUTE_KEY = "snakeMuted";
+
+function loadMuted() {
+  try {
+    return localStorage.getItem(MUTE_KEY) === "1";
+  } catch (e) {
+    return false; // localStorage kullanılamıyorsa ses açık başlar
+  }
+}
+
+function saveMuted(value) {
+  try {
+    localStorage.setItem(MUTE_KEY, value ? "1" : "0");
+  } catch (e) {
+    // kaydedilemezse oyun yine de çalışsın
+  }
+}
+
+let muted = loadMuted();
+
 // Belirli frekansta (Hz), belirli sürede (sn) bir bip çalar
 function beep(frequency, duration, type, delay = 0, volume = 0.15) {
+  if (muted) return; // tüm sesler (efektler + müzik) bu tek yerden geçer
   try {
     // AudioContext'i ilk kullanımda oluştur (tarayıcılar tuş basışından sonra izin verir)
     if (!audioCtx) audioCtx = new AudioContext();
@@ -213,6 +235,12 @@ const KEY_DIRECTIONS = {
 // Tuşa basılınca yönü kuyruğa ekler (hareketi update() yapar)
 function handleKey(event) {
   startMusic(); // müzik ilk tuş basışında başlar
+  // M: tüm sesleri aç/kapat ve tercihi kaydet
+  if (event.key === "m" || event.key === "M") {
+    muted = !muted;
+    saveMuted(muted);
+    return;
+  }
   // Boşluk: yalnızca oyun bittiyse yeniden başlat
   if (event.key === " ") {
     event.preventDefault(); // boşluk sayfayı kaydırmasın
