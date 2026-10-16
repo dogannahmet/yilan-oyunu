@@ -10,4 +10,5 @@ body {
 canvas {
   background: #111;
   border: 2px solid #555;
+  touch-action: none; /* parmakla kaydırırken sayfa kaymasın */
 }

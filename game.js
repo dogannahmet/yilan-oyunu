@@ -271,15 +271,57 @@ function handleKey(event) {
   const next = KEY_DIRECTIONS[event.key];
   if (!next) return;
   event.preventDefault(); // ok tuşları sayfayı kaydırmasın
+  queueDirection(next);
+}
+
+document.addEventListener("keydown", handleKey);
+
+// Yönü doğrudan değiştirme, kuyruğa ekle (en fazla 2 girdi).
+// Klavye ve kaydırma aynı kuyruğu kullanır.
+function queueDirection(next) {
   if (!state.started) return; // oyun başlamadan yön girdisi alma
-  // Yönü doğrudan değiştirme, kuyruğa ekle (en fazla 2 girdi).
   // Aynı yönü art arda eklemek kuyruğu boşuna doldurur, onu atla.
   const last = state.inputQueue[state.inputQueue.length - 1] || state.direction;
   const isSame = next.x === last.x && next.y === last.y;
   if (state.inputQueue.length < 2 && !isSame) state.inputQueue.push(next);
 }
 
-document.addEventListener("keydown", handleKey);
+// Kaydırma (swipe): parmak bu kadar piksel hareket etmeden yön sayılmaz
+const SWIPE_MIN_DISTANCE = 30;
+let touchStart = null;
+
+function handleTouchStart(event) {
+  event.preventDefault(); // sayfa kaymasın
+  const touch = event.touches[0];
+  touchStart = { x: touch.clientX, y: touch.clientY };
+}
+
+function handleTouchMove(event) {
+  event.preventDefault(); // kaydırırken sayfa kaymasın
+  if (!touchStart) return;
+  const touch = event.touches[0];
+  const dx = touch.clientX - touchStart.x;
+  const dy = touch.clientY - touchStart.y;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_MIN_DISTANCE) return;
+  // Hangi eksende daha çok gittiyse yön odur
+  if (Math.abs(dx) > Math.abs(dy)) {
+    queueDirection(dx > 0 ? KEY_DIRECTIONS.ArrowRight : KEY_DIRECTIONS.ArrowLeft);
+  } else {
+    queueDirection(dy > 0 ? KEY_DIRECTIONS.ArrowDown : KEY_DIRECTIONS.ArrowUp);
+  }
+  // Parmak kalkmadan art arda kaydırma olabilsin: başlangıcı buraya al
+  touchStart = { x: touch.clientX, y: touch.clientY };
+}
+
+function handleTouchEnd() {
+  touchStart = null;
+}
+
+// passive:false, preventDefault()'un çalışması için gerekli
+canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+canvas.addEventListener("touchend", handleTouchEnd);
+canvas.addEventListener("touchcancel", handleTouchEnd);
 
 // Oyun döngüsü: güncelle -> çiz -> bekle (yaklaşık 100 ms)
 function loop() {
