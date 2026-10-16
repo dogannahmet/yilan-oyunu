@@ -20,6 +20,25 @@ function randomFood(snake) {
   }
 }
 
+// En yüksek skoru tarayıcının localStorage'ında saklarız (sayfa kapansa da kalır)
+const HIGH_SCORE_KEY = "snakeHighScore";
+
+function loadHighScore() {
+  try {
+    return Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+  } catch (e) {
+    return 0; // localStorage kullanılamıyorsa 0'dan başla
+  }
+}
+
+function saveHighScore(value) {
+  try {
+    localStorage.setItem(HIGH_SCORE_KEY, String(value));
+  } catch (e) {
+    // kaydedilemezse oyun yine de çalışsın
+  }
+}
+
 // Oyun durumu: oyunla ilgili tüm bilgi burada durur
 const state = {
   // Yılan, parçalarının listesi; ilk eleman baş
@@ -32,6 +51,7 @@ const state = {
   direction: { x: 1, y: 0 },
   food: null, // aşağıda, yılan tanımlandıktan sonra atanır
   score: 0,
+  highScore: loadHighScore(),
   gameOver: false,
 };
 state.food = randomFood(state.snake);
@@ -63,6 +83,10 @@ function update() {
   if (newHead.x === state.food.x && newHead.y === state.food.y) {
     // Yem yenildi: kuyruğu atma, böylece yılan uzar; skor artar; yeni yem koy
     state.score += 1;
+    if (state.score > state.highScore) {
+      state.highScore = state.score;
+      saveHighScore(state.highScore);
+    }
     state.food = randomFood(state.snake);
   } else {
     // Yem yok: kuyruğu at, yılan sadece ilerler
@@ -85,6 +109,8 @@ function draw() {
   ctx.font = "16px sans-serif";
   ctx.textAlign = "left";
   ctx.fillText("Skor: " + state.score, 8, 20);
+  ctx.textAlign = "right";
+  ctx.fillText("En yüksek: " + state.highScore, canvas.width - 8, 20);
 
   if (state.gameOver) {
     ctx.font = "32px sans-serif";
