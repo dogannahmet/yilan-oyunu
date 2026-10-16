@@ -9,7 +9,8 @@ Kütüphane, sunucu veya veritabanı yok.
 
 ## Nasıl oynanır?
 
-- **Ok tuşları:** yılanı yönlendirir (tam ters yöne dönülemez)
+- **Ok tuşları:** yılanı yönlendirir (tam ters yöne dönülemez; hızlı basılan tuşlar sırayla işlenir)
+- **M tuşu:** tüm sesleri (efektler ve müzik) açar/kapatır; tercih tarayıcıda saklanır
 - **Yem:** yılan yemi yiyince uzar, skor 1 artar ve kısa bir ses çalar
 - **Çarpışma:** duvara ya da kendine çarpınca oyun biter ve farklı bir ses çalar
 - **Boşluk tuşu:** oyun bittiyse yeniden başlatır
@@ -34,6 +35,7 @@ Kütüphane, sunucu veya veritabanı yok.
 - `handleKey()`: ok tuşları yönü, boşluk tuşu yeniden başlatmayı yönetir.
 - `resetGame()`: oyunu başa sarar, en yüksek skoru korur.
 - `loop()`: her 100 ms'de güncelle -> çiz.
+- `state.inputQueue`: basılan yönler burada bekler (en fazla 2); `update()` karede birini işler.
 - `beep()`, `playEatSound()`, `playGameOverSound()`: sesler.
 - `startMusic()`, `musicTick()`: arka plan müziği.
 
@@ -55,9 +57,13 @@ Her özellik ayrı bir commit olarak eklendi:
 12. Yem ve oyun sonu sesleri
 13. Arka plan gerilim müziği
 
+v1.1 (`v1.1-duzeltmeler` dalı):
+
+14. Hata düzeltme: yön girdileri kuyruğa alındı
+15. M tuşuyla sessize alma
+
 Tam liste için: `git log --oneline`
 
 ## Bilinen sınırlar
 
-- Aynı karede çok hızlı iki yön tuşuna basılırsa yılan ters yöne dönebilir.
 - Yılan kendi kuyruğunun bulunduğu kareye girerse de çarpmış sayılır.
