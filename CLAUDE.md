@@ -8,7 +8,7 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 - Küçük ve anlaşılır commit'ler at.
 - Her adımda ne yaptığını ve nedenini kısaca açıkla.
 - Kullanıcı onay vermeden bir sonraki özelliğe geçme.
-- Oyun sürerken arka planda hafif gerilim müziği çalar, oyun bitince susar. Müzik dosyasız, Web Audio ile üretilir ve ilk tuş basışında başlar.
+- Oyun sürerken arka planda hafif gerilim müziği çalar, oyun bitince susar. Müzik dosyasız, Web Audio ile üretilir ve ilk tuş basışında ya da dokunuşta başlar.
 
 ## Proje kısıtları
 
@@ -20,6 +20,7 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 - Oyun durumu (`state`): snake, direction, inputQueue, food, score, highScore, started, gameOver.
 - Oyun sayfa açılınca beklemede başlar (`started: false`); boşluk tuşu başlatır. Müzik de başlamadan çalmaz.
 - Yön girdileri `inputQueue`'ya (en fazla 2) girer; `update()` karede birini işler.
+- Telefon desteği: klavye ve parmak kaydırması aynı `queueDirection()` ile kuyruğa girer; dokunuş boşlukla aynı işi yapar (`startOrRestart()`); tahta ekrana sığacak şekilde küçülür. Dokunmatik cihazda M ipucu yerine ses düğmesi görünür.
 - Döngü: güncelle -> çiz -> bekle (yaklaşık her 100 ms'de bir kare).
 - Durumu değiştiren kod (`update`) ile çizen kod (`draw`) ayrı fonksiyonlarda olmalı.
 
@@ -27,5 +28,6 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 
 yılanı çizme -> hareket -> klavye -> yem -> çarpışma -> skor -> en yüksek skor
 (tamamlandı) + sonradan: yeniden başlatma, şeffaf skor yazıları, sesler, girdi kuyruğu,
-M ile sessize alma (ekranda ipucu), boşlukla başlama.
+M ile sessize alma (ekranda ipucu), boşlukla başlama, telefon desteği (kaydırma,
+dokunarak başlatma, ekran uyumu).
 Yeni özellikler de aynı kuralla, ayrı commit'ler ve onayla eklenir.
