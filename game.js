@@ -175,6 +175,7 @@ const state = {
   food: null, // aşağıda, yılan tanımlandıktan sonra atanır
   score: 0,
   highScore: loadHighScore(),
+  newRecord: false, // bu oyunda rekor kırıldı mı? (bitiş ekranında mesaj için)
   started: false, // oyun boşluk tuşuyla başlar; o zamana kadar bekler
   gameOver: false,
 };
@@ -191,6 +192,7 @@ function resetGame() {
   state.inputQueue = [];
   state.food = randomFood(state.snake);
   state.score = 0;
+  state.newRecord = false;
   state.gameOver = false;
 }
 
@@ -236,6 +238,7 @@ function update() {
     // Ekranda anında görünsün diye bellekteki rekoru güncelle (kayıt oyun bitince)
     if (state.score > state.highScore) {
       state.highScore = state.score;
+      state.newRecord = true; // rekor kırıldı, bitişte "Yeni rekor!" gösterilecek
     }
     state.food = randomFood(state.snake);
   } else {
@@ -292,6 +295,12 @@ function draw() {
     ctx.font = "32px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Oyun Bitti", canvas.width / 2, canvas.height / 2);
+    // Rekor kırıldıysa altında altın sarısı kısa bir mesaj
+    if (state.newRecord) {
+      ctx.fillStyle = "#ffd54f";
+      ctx.font = "24px sans-serif";
+      ctx.fillText("Yeni rekor!", canvas.width / 2, canvas.height / 2 + 36);
+    }
   }
 }
 
