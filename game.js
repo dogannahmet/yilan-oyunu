@@ -21,11 +21,16 @@ function randomFood(snake) {
 }
 
 // En yüksek skoru tarayıcının localStorage'ında saklarız (sayfa kapansa da kalır)
-const HIGH_SCORE_KEY = "snakeHighScore";
+const HIGH_SCORE_KEY = "yilanEnYuksekSkor";
+// Eski sürümlerde kullanılan anahtar: oyuncunun rekoru kaybolmasın diye bir kez okunur
+const OLD_HIGH_SCORE_KEY = "snakeHighScore";
 
 function loadHighScore() {
   try {
-    return Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+    const saved =
+      localStorage.getItem(HIGH_SCORE_KEY) ??
+      localStorage.getItem(OLD_HIGH_SCORE_KEY);
+    return Number(saved) || 0;
   } catch (e) {
     return 0; // localStorage kullanılamıyorsa 0'dan başla
   }
@@ -217,6 +222,8 @@ function update() {
   if (hitWall || hitSelf) {
     state.gameOver = true;
     playGameOverSound();
+    // Oyun bitti: rekor kırıldıysa yeni değer, kırılmadıysa aynı değer saklanır
+    saveHighScore(state.highScore);
     return;
   }
 
@@ -226,9 +233,9 @@ function update() {
     // Yem yenildi: kuyruğu atma, böylece yılan uzar; skor artar; yeni yem koy
     state.score += 1;
     playEatSound();
+    // Ekranda anında görünsün diye bellekteki rekoru güncelle (kayıt oyun bitince)
     if (state.score > state.highScore) {
       state.highScore = state.score;
-      saveHighScore(state.highScore);
     }
     state.food = randomFood(state.snake);
   } else {
@@ -247,13 +254,16 @@ function draw() {
     ctx.fillRect(part.x * TILE, part.y * TILE, TILE - 1, TILE - 1);
   }
 
-  // Skorları sol ve sağ üste yaz; yarı şeffaf, altındaki yılan/yem görünsün
+  // Skor ve en yüksek skoru sol üstte yan yana yaz; yarı şeffaf, altındaki
+  // yılan/yem görünsün
   ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
   ctx.font = "16px sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("Skor: " + state.score, 8, 20);
-  ctx.textAlign = "right";
-  ctx.fillText("En yüksek: " + state.highScore, canvas.width - 8, 20);
+  ctx.fillText(
+    "Skor: " + state.score + "   En yüksek: " + state.highScore,
+    8,
+    20
+  );
 
   // Sessize alma ipucu, sol altta; ses durumunu da gösterir.
   // Dokunmatik cihazlarda yerine HTML'deki ses düğmesi görünür.
