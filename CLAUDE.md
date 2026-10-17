@@ -18,7 +18,7 @@ Tarayıcıda çalışan Yılan oyunu. Düz HTML + CSS + JavaScript, `<canvas>` i
 ## Mimari
 
 - Oyun durumu (`state`): snake, direction, inputQueue, food, score, highScore, newRecord, started, gameOver.
-- En yüksek skor localStorage'da `yilanEnYuksekSkor` anahtarıyla oyun bitince saklanır; kırılan rekor bitiş ekranında "Yeni rekor!" ile gösterilir. localStorage hatası oyunu bozmamalı (try/catch).
+- En yüksek skor localStorage'da `yilanEnYuksekSkor` anahtarıyla oyun bitince saklanır; kırılan rekor bitiş ekranında "Yeni rekor!" ile gösterilir (yalnızca önceki rekor 0'dan büyükse). localStorage hatası oyunu bozmamalı (try/catch).
 - Oyun sayfa açılınca beklemede başlar (`started: false`); boşluk tuşu başlatır. Müzik de başlamadan çalmaz.
 - Yön girdileri `inputQueue`'ya (en fazla 2) girer; `update()` karede birini işler.
 - Telefon desteği: klavye ve parmak kaydırması aynı `queueDirection()` ile kuyruğa girer; dokunuş boşlukla aynı işi yapar (`startOrRestart()`); tahta ekrana sığacak şekilde küçülür. Dokunmatik cihazda M ipucu yerine ses düğmesi görünür.

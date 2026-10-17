@@ -25,7 +25,7 @@ Bilgisayarda klavyeyle, telefonda parmakla oynanır:
 - **Çarpışma:** duvara ya da kendine çarpınca oyun biter ve farklı bir ses çalar
 - **Skor:** sol üstte "Skor" ve "En yüksek" yan yana gösterilir (yarı şeffaf, altındaki yılan/yem görünür)
 - **En yüksek skor:** tarayıcıda (localStorage, `yilanEnYuksekSkor` anahtarı) oyun bitince saklanır, sayfa kapansa da kalır. Eski sürümlerin rekoru da devralınır. localStorage kullanılamıyorsa oyun yine çalışır.
-- **Yeni rekor:** rekor kırılırsa bitiş ekranında altın sarısı "Yeni rekor!" yazar.
+- **Yeni rekor:** daha önce bir rekor varsa (0'dan büyükse) ve bu oyunda kırıldıysa bitiş ekranında altın sarısı "Yeni rekor!" yazar. İlk oyunda gösterilmez.
 - **Sessize alma tercihi:** M tuşu/ses düğmesi seçimi de localStorage'da (`snakeMuted`) saklanır.
 - **Müzik:** oyun sürerken arka planda hafif gerilimli bir müzik çalar, oyun bitince susar
 - **Sesler:** ses dosyası yok, tarayıcının Web Audio özelliğiyle üretilir. Tarayıcılar sesi ilk tuş basışından ya da dokunuştan sonra açar.

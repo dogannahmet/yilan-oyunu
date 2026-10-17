@@ -176,10 +176,12 @@ const state = {
   score: 0,
   highScore: loadHighScore(),
   newRecord: false, // bu oyunda rekor kırıldı mı? (bitiş ekranında mesaj için)
+  bestBeforeGame: 0, // oyun başlarken var olan rekor; aşağıda highScore'dan alınır
   started: false, // oyun boşluk tuşuyla başlar; o zamana kadar bekler
   gameOver: false,
 };
 state.food = randomFood(state.snake);
+state.bestBeforeGame = state.highScore;
 
 // Oyunu başa sar: en yüksek skor korunur, geri kalan sıfırlanır
 function resetGame() {
@@ -193,6 +195,7 @@ function resetGame() {
   state.food = randomFood(state.snake);
   state.score = 0;
   state.newRecord = false;
+  state.bestBeforeGame = state.highScore; // yeni oyunun "önceki rekoru"
   state.gameOver = false;
 }
 
@@ -238,7 +241,9 @@ function update() {
     // Ekranda anında görünsün diye bellekteki rekoru güncelle (kayıt oyun bitince)
     if (state.score > state.highScore) {
       state.highScore = state.score;
-      state.newRecord = true; // rekor kırıldı, bitişte "Yeni rekor!" gösterilecek
+      // "Yeni rekor!" yalnızca daha önce bir rekor varsa (0'dan büyükse) gösterilir;
+      // ilk oyunda kıracak bir rekor yoktur
+      if (state.bestBeforeGame > 0) state.newRecord = true;
     }
     state.food = randomFood(state.snake);
   } else {
