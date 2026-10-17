@@ -23,8 +23,10 @@ Bilgisayarda klavyeyle, telefonda parmakla oynanır:
 - **Ekran uyumu:** tahta telefon ekranına sığacak şekilde küçülür, en-boy oranı (kare) bozulmaz.
 - **Yem:** yılan yemi yiyince uzar, skor 1 artar ve kısa bir ses çalar
 - **Çarpışma:** duvara ya da kendine çarpınca oyun biter ve farklı bir ses çalar
-- **Skor:** sol üstte, **en yüksek skor** sağ üstte gösterilir (yarı şeffaf, altındaki yılan/yem görünür)
-- **En yüksek skor:** tarayıcıda (localStorage) saklanır, sayfa kapansa da kalır
+- **Skor:** sol üstte "Skor" ve "En yüksek" yan yana gösterilir (yarı şeffaf, altındaki yılan/yem görünür)
+- **En yüksek skor:** tarayıcıda (localStorage, `yilanEnYuksekSkor` anahtarı) oyun bitince saklanır, sayfa kapansa da kalır. Eski sürümlerin rekoru da devralınır. localStorage kullanılamıyorsa oyun yine çalışır.
+- **Yeni rekor:** rekor kırılırsa bitiş ekranında altın sarısı "Yeni rekor!" yazar.
+- **Sessize alma tercihi:** M tuşu/ses düğmesi seçimi de localStorage'da (`snakeMuted`) saklanır.
 - **Müzik:** oyun sürerken arka planda hafif gerilimli bir müzik çalar, oyun bitince susar
 - **Sesler:** ses dosyası yok, tarayıcının Web Audio özelliğiyle üretilir. Tarayıcılar sesi ilk tuş basışından ya da dokunuştan sonra açar.
 
@@ -39,7 +41,7 @@ Bilgisayarda klavyeyle, telefonda parmakla oynanır:
 
 ## Kod yapısı (`game.js`)
 
-- `state`: snake, direction, inputQueue, food, score, highScore, started, gameOver
+- `state`: snake, direction, inputQueue, food, score, highScore, newRecord, started, gameOver
 - `update()`: durumu değiştirir (hareket, yem, çarpışma, skor). Çizim yapmaz.
 - `draw()`: sadece çizer. Durumu değiştirmez.
 - `handleKey()`: ok tuşları, boşluk ve M tuşunu yönetir.
@@ -85,6 +87,11 @@ v1.3 (`v1.3-dokunmatik` dalı, telefon desteği):
 17. Kaydırma (swipe) kontrolü
 18. Dokunarak başlatma
 19. Ekran uyumu ve dokunmatik ses düğmesi
+
+v1.4 (`v1.4-rekor` dalı, en yüksek skor):
+
+20. En yüksek skor `yilanEnYuksekSkor` anahtarıyla, oyun bitince saklanır; skorun yanında gösterilir
+21. Yeni rekor mesajı
 
 Tam liste için: `git log --oneline`
 
